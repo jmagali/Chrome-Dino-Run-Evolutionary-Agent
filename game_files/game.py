@@ -17,7 +17,6 @@ class Game:
         self.base = Base(y=400, vel_px_s=velocity)
         self.cacti = Cacti(y=(400 + self.base.BASE_IMG.get_height() - 20), vel_px_s=velocity, screen_w=self.WIN_WIDTH)
         self.dinos = []
-        self.score = 0
         
     def draw_window(self):
         self.window.fill((255, 255, 255))
@@ -28,8 +27,9 @@ class Game:
             dino.draw(self.window)
         
         # Score
+        score = self.dinos[0].score
         font = pygame.font.Font(None, 30)
-        fontLabel = font.render(f"Score: {round(self.score / 10) * 10}", True, (0, 0, 0))
+        fontLabel = font.render(f"Score: {round(score / 10) * 10}", True, (0, 0, 0))
         labelRect = fontLabel.get_rect(center=(10 + fontLabel.get_size()[0] / 2, 10 + fontLabel.get_size()[1] / 2))
         self.window.blit(fontLabel, labelRect)
         
@@ -38,7 +38,6 @@ class Game:
     def reset_game(self, n):
         self.clock = pygame.time.Clock()
         self.cacti = Cacti(y=(400 + self.base.BASE_IMG.get_height() - 20), vel_px_s=self.velocity, screen_w=self.WIN_WIDTH)
-        self.score = 0
         
         self.dinos = []
         for i in range(n):
@@ -48,7 +47,6 @@ class Game:
         for _ in pygame.event.get():
             pass
         
-        self.score += 0.1
         dt = self.clock.tick(self.FPS) / 1000.0   
         self.base.move(dt)
         self.cacti.move(dt)
@@ -57,6 +55,7 @@ class Game:
         
         for dino in self.dinos:
             dino.move(dt, cacti_to_check, cacti_to_check_x_poses)
+            dino.score += 0.25
         
         self.draw_window()
     
@@ -68,8 +67,9 @@ class Game:
                 obs.append(cactus[1] - self.WIN_WIDTH / 2) # From head of dino to start of cactus
                 obs.append(self.cacti.cacti_imgs[cactus[0]]["width"]) # Width of cactus
                 obs.append(self.cacti.cacti_imgs[cactus[0]]["height"]) # Width of cactus
+                obs.append(dino.vy) # Vertical velocity, helps determine double jump
             else:
-                obs.extend([0, 0, 0])
+                obs.extend([0, 0, 0, 0])
         obs.append(dino.height - (400 + self.base.BASE_IMG.get_height() - 20)) # Get the current height of dino from ground
         obs.append(2 - dino.jumps_used)
         return obs

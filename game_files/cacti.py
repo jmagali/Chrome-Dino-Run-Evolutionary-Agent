@@ -35,7 +35,7 @@ class Cacti:
     def find_cactus_of_interest(self): # Only those in front of dino and within screen are of interest
         interest = []
         for cactus in self.cacti_queue:
-            if self.screen_w / 2 - 100 < cactus[1] < self.screen_w:
+            if self.screen_w / 2 - self.cacti_imgs[cactus[0]]["width"] - 20 < cactus[1] < self.screen_w:
                 interest.append(cactus)
             if cactus[1] > self.screen_w:
                 break
@@ -43,7 +43,7 @@ class Cacti:
     
     def generate_next_cacti(self):
         for _ in range(5 - len(self.cacti_queue)):
-            self.cacti_queue.append([random.choice(list(self.cacti_imgs.keys())), self.cacti_queue[-1][1] + random.randrange(150, 500)])
+            self.cacti_queue.append([random.choice(list(self.cacti_imgs.keys())), self.cacti_queue[-1][1] + random.randrange(400, 800)])
         
     def move(self, dt):
         dx = self.vel_px_s * dt

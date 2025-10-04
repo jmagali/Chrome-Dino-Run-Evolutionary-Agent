@@ -19,6 +19,8 @@ class Dino:
         self.img = self.DINO_IMGS[0]
         self.jumps_used = 0 # For double jumping
         self.alive = True
+        self.score = 0
+        self.vy = 0
     
     def jump(self):
         self.is_jumping = True
@@ -29,8 +31,10 @@ class Dino:
     def move(self, dt, cacti, cacti_x_poses):
         # Jump
         self.t += dt * 20
+        self.vy = 0
         if self.is_jumping:
             self.height = self.y0 + self.vel * self.t + 0.5 * self.gravity * (self.t ** 2)
+            self.vy = self.vel + self.gravity * self.t
             if self.height >= self.y:
                 self.height = self.y
                 self.is_jumping = False

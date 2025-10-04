@@ -23,10 +23,8 @@ def eval_genomes(genomes_tuple, config):
     game.reset_game(n=len(genomes))
         
     while len(game.dinos) > 0:
-        score = 0
         for i, dino in enumerate(game.dinos):
-            genomes[i].fitness += 0.1 # Small reward for surviving another step
-            score += 0.25
+            genomes[i].fitness += 0.25 # Small reward for surviving another step
             output = networks[i].activate(game.get_observations(dino))
             if output[0] > 0.5 and dino.jumps_used < 2:
                 dino.jump()
@@ -39,10 +37,15 @@ def eval_genomes(genomes_tuple, config):
                 networks.pop(game.dinos.index(dino))
                 genomes.pop(game.dinos.index(dino))
                 game.dinos.pop(game.dinos.index(dino))
-                
-        if score > 1000:
-            break # Dino is good to go if it reached score 1000
+    
+        has_good_dino = False
+        for dino in game.dinos:
+            if dino.score >= 300:
+                has_good_dino = True
         
+        if has_good_dino:
+            break
+            
     time.sleep(0.05)
     
 def run_evolution(config_file):
