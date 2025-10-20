@@ -23,7 +23,29 @@ def eval_genomes(genomes_tuple, config):
     game.reset_game(n=len(genomes))
         
     # EDIT THE TRAINING LOOP
-    
+    while len(game.dinos) > 0:
+        for i, dino in enumerate(game.dinos):
+            genomes[i].fitness += 0.25 # Small reward for surviving another step
+            output = networks[i].activate(game.get_observations(dino))
+            if output[0] > 0.5 and dino.jumps_used < 2:
+                dino.jump()
+           
+        game.step()
+       
+        # Remove any dead dinos
+        for dino in game.dinos:
+            if not dino.alive:
+                networks.pop(game.dinos.index(dino))
+                genomes.pop(game.dinos.index(dino))
+                game.dinos.pop(game.dinos.index(dino))
+   
+        has_good_dino = False
+        for dino in game.dinos:
+            if dino.score >= 300:
+                has_good_dino = True
+       
+        if has_good_dino:
+            break
            
     time.sleep(0.05)
     
