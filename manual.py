@@ -21,7 +21,7 @@ while play:
                 run = False
                 play = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or pygame.K_UP and dino.jumps_used < 2: 
+                if event.key == (pygame.K_SPACE or pygame.K_UP) and dino.jumps_used < 2: 
                     dino.jump()
         
         game.step()
